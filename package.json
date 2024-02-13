@@ -26,6 +26,7 @@
     "@ag-grid-enterprise/sparklines": "30.0.6",
     "@ag-grid-enterprise/status-bar": "30.0.6",
     "@interopio/browser": "^3.1.2",
+    "@interopio/desktop": "^6.0.1",
     "@interopio/react-hooks": "^3.1.2",
     "@interopio/theme-demo-apps": "^4.1.2",
     "@vitejs/plugin-react": "^4.2.1",
