@@ -151,16 +151,21 @@ export const AxesBlotter = () => {
     return workspace.onContextUpdated((context: any) => {
       const adaptableApi = adaptableApiRef.current;
 
-      if (ISIN_CONTEXT in context && adaptableApi) {
-        const isinValue = context[ISIN_CONTEXT].id?.ISIN;
-        const isinFilter: ColumnFilter = {
-          ColumnId: 'ISIN',
-          Predicate: {
-            PredicateId: 'Is',
-            Inputs: [isinValue],
-          },
-        };
-        adaptableApi.filterApi.setColumnFilters([isinFilter]);
+      if (adaptableApi) {
+        if (ISIN_CONTEXT in context && adaptableApi) {
+          const isinValue = context[ISIN_CONTEXT].id?.ISIN;
+          const isinFilter: ColumnFilter = {
+            ColumnId: 'ISIN',
+            Predicate: {
+              PredicateId: 'Is',
+              Inputs: [isinValue],
+            },
+          };
+          adaptableApi.filterApi.setColumnFilters([isinFilter]);
+        } else {
+          // TODO - investigate and remove
+          adaptableApi.filterApi.clearColumnFilters();
+        }
       }
     });
   });
