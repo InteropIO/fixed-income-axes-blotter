@@ -42,6 +42,9 @@ export const AxesBlotter = () => {
       primaryKey: 'Id',
       userName: 'Test User',
       adaptableId: 'AdaptableFinsembleAxes',
+      filterOptions: {
+        clearFiltersOnStartUp: true,
+      },
       fdc3Options: {
         enableLogging: true,
         contexts: {
