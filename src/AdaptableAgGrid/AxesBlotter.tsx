@@ -7,8 +7,6 @@ import AdaptableReact, {
   AdaptableApi,
   AdaptableOptions,
   ColumnFilter,
-  HandleFdc3Context,
-  HandleFdc3IntentContext,
 } from '@adaptabletools/adaptable-react-aggrid';
 import { columnDefs, defaultColDef } from './columnDefs';
 import { rowData, SellBondInterest } from './rowData';
@@ -16,6 +14,8 @@ import { agGridModules } from './agGridModules';
 import { renderReactRoot } from '../react-18-utils';
 import '@interopio/theme-demo-apps/dist/io.applications.css';
 import { useIOConnect } from '@interopio/react-hooks';
+import { IOConnectBrowser } from '@interopio/browser';
+import { IOConnectDesktop } from '@interopio/desktop';
 
 const renderWeakMap: WeakMap<HTMLElement, Root> = new WeakMap();
 
@@ -36,55 +36,13 @@ export const AxesBlotter = () => {
   );
   const adaptableOptions = useMemo<AdaptableOptions<SellBondInterest>>(
     () => ({
-      // licenseKey: import.meta.env.VITE_ADAPTABLE_LICENSE_KEY,
       licenseKey:
         'AppName=interop-Trial|Owner=interop|StartDate=2023-11-23|EndDate=2024-01-23|Ref=AdaptableLicense|Trial=true|TS=1700741032831|C=2692006938,2271485454,4261170317,1260976079,180944542,4061129120,1409499958,3452034758',
       primaryKey: 'Id',
       userName: 'Test User',
-      adaptableId: 'AdaptableFinsembleAxes',
+      adaptableId: 'AdaptableAxesBlotter',
       filterOptions: {
         clearFiltersOnStartUp: true,
-      },
-      fdc3Options: {
-        enableLogging: true,
-        contexts: {
-          listensFor: ['fdc3.instrument'],
-          handleContext: (params: HandleFdc3Context) => {
-            const { adaptableApi, context } = params;
-            if (context.type !== 'fdc3.instrument') {
-              return;
-            }
-            const isinValue = context.id?.ISIN;
-            const isinFilter: ColumnFilter = {
-              ColumnId: 'ISIN',
-              Predicate: {
-                PredicateId: 'Is',
-                Inputs: [isinValue],
-              },
-            };
-            adaptableApi.filterApi.setColumnFilters([isinFilter]);
-          },
-        },
-        intents: {
-          listensFor: ['ViewInstrument', 'ViewOrder'],
-          handleIntent: (fdc3IntentContext: HandleFdc3IntentContext) => {
-            console.log(`Received context: `, fdc3IntentContext);
-
-            const { adaptableApi, context } = fdc3IntentContext;
-            if (context.type !== 'fdc3.instrument') {
-              return;
-            }
-            const isinValue = context.id?.ISIN;
-            const isinFilter: ColumnFilter = {
-              ColumnId: 'ISIN',
-              Predicate: {
-                PredicateId: 'Is',
-                Inputs: [isinValue],
-              },
-            };
-            adaptableApi.filterApi.setColumnFilters([isinFilter]);
-          },
-        },
       },
       predefinedConfig: {
         Dashboard: {
@@ -128,13 +86,16 @@ export const AxesBlotter = () => {
 
   useEffect(() => {
     async function setMyWorkspaceId() {
-      const inWsp = await (window as any).io.workspaces?.inWorkspace();
+      const { io }: { io: IOConnectBrowser.API | IOConnectDesktop.API } =
+        window as any;
+
+      const inWsp = await io.workspaces?.inWorkspace();
       if (!inWsp) {
         return;
       }
 
-      const myWorkspace = await (window as any).io.workspaces?.getMyWorkspace();
-      await (window as any).io.windows.my().updateContext({
+      const myWorkspace = await io.workspaces?.getMyWorkspace();
+      await io.windows.my().updateContext({
         workspaceId: myWorkspace?.id,
       });
     }
@@ -151,7 +112,7 @@ export const AxesBlotter = () => {
       ) || (await io.workspaces?.getMyWorkspace());
     if (!workspace) return;
 
-    return workspace.onContextUpdated((context: any) => {
+    return workspace.onContextUpdated((context) => {
       const adaptableApi = adaptableApiRef.current;
 
       if (adaptableApi) {
