@@ -41,6 +41,9 @@ export const AxesBlotter = () => {
       primaryKey: 'Id',
       userName: 'Test User',
       adaptableId: 'AdaptableAxesBlotter',
+      filterOptions: {
+        clearFiltersOnStartUp: true,
+      },
       predefinedConfig: {
         Dashboard: {
           Revision,
@@ -123,9 +126,6 @@ export const AxesBlotter = () => {
             },
           };
           adaptableApi.filterApi.setColumnFilters([isinFilter]);
-        } else {
-          // TODO - investigate and remove
-          adaptableApi.filterApi.clearColumnFilters();
         }
       }
     });
