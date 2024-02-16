@@ -165,9 +165,6 @@ export const AxesBlotter = () => {
             },
           };
           adaptableApi.filterApi.setColumnFilters([isinFilter]);
-        } else {
-          // TODO - investigate and remove
-          adaptableApi.filterApi.clearColumnFilters();
         }
       }
     });
